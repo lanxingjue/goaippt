@@ -6,6 +6,7 @@ import EditorPage from './EditorPage';
 
 // 导入 CSS Modules 样式文件
 import styles from './App.module.css';
+// 不再需要导入 ./App.css
 
 function App() {
   // App 组件现在主要作为应用的顶级容器和路由配置中心，
@@ -36,6 +37,7 @@ function App() {
 
     try {
       // 向后端发送 POST 请求，触发 PPT 生成 API
+      // 后端现在直接返回生成的演示文稿数据，而不是只返回ID
       const response = await fetch(`${API_BASE_URL}/api/presentations/generate`, {
         method: 'POST',
         headers: {
@@ -47,15 +49,24 @@ function App() {
       // 检查 HTTP 响应状态码
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Generation failed');
+        // 尝试从 detail 中获取更具体的错误信息
+        const errorMessage = typeof errorData.detail === 'string' ? errorData.detail : 'Generation failed';
+        throw new Error(errorMessage);
       }
 
-      // 解析后端返回的 JSON 数据，获取生成的 PPT ID
-      const data = await response.json();
-      console.log("Generated presentation ID:", data.id);
+      // 解析后端返回的 JSON 数据，获取整个演示文稿对象
+      const presentationData = await response.json();
+      console.log("Generated presentation data received:", presentationData);
       // 生成成功后，使用 navigate 函数跳转到编辑器页面，并将 PPT ID 作为 URL 参数传递。
       // 例如，ID 为 "abc" 的演示文稿会跳转到 "/edit/abc"。
-      navigate(`/edit/${data.id}`);
+      // EditorPage 会通过 URL 参数获取 ID，并发送 GET 请求加载数据。
+      if(presentationData && presentationData.id) {
+         navigate(`/edit/${presentationData.id}`);
+      } else {
+         // 如果后端没有返回ID，说明生成失败
+         throw new Error("Generation succeeded but no presentation ID returned.");
+      }
+
 
     } catch (err) {
       // 捕获并处理生成过程中的错误
@@ -80,17 +91,17 @@ function App() {
             <Route path="/" element={
                 <> {/* 使用 Fragment 来包裹多个同级元素，避免额外的 DOM 节点 */}
                     {/* 主页头部 */}
-                    <header className={styles.header}>
+                    <header className={styles.header}> {/* 应用 header 类的样式 */}
                         <h1>AI Presentation Generator</h1> {/* 应用头部样式和标题样式 */}
                     </header>
                      {/* 主页主要内容区域 */}
                      <main>
                         {/* 输入区域容器 */}
-                        <div className={styles.inputSection}> {/* 应用输入区域样式 */}
+                        <div className={styles.inputSection}> {/* 应用 inputSection 类的样式 */}
                             <h2>Enter your text or outline</h2> {/* 输入区域标题 */}
                             <textarea
                                 rows="10"
-                                cols="80" // cols 在 CSS 控制宽度时更多是作为 textarea 的属性存在，实际可见列数由 CSS 的 width 属性决定。
+                                cols="80"
                                 value={inputText} // 绑定到状态
                                 onChange={(e) => setInputText(e.target.value)} // 状态更新
                                 placeholder="Paste your document, report, or outline here..." // 占位符文本
@@ -101,24 +112,29 @@ function App() {
                                 className={styles.neonButton} // 应用赛博朋克按钮样式
                                 onClick={handleGenerate} // 绑定点击事件
                                 disabled={loading} // 根据加载状态禁用
-                                // 添加一个数据属性，用于在 CSS 中根据状态改变按钮样式（例如加载动画）
-                                data-loading={loading ? "true" : "false"}
+                                data-loading={loading ? "true" : "false"} // 添加数据属性用于CSS动画
                             >
                                 {loading ? 'Processing Data...' : 'Generate Presentation'} {/* 根据加载状态显示不同文本 */}
                             </button>
                             {/* 消息显示区域 */}
-                            <div className={styles.messageArea}> {/* 应用消息区域样式 */}
-                                {loading && <p className={styles.loadingMessage}>Processing Data: Analyzing Inputs...</p>} {/* 加载中提示 */}
-                                {error && <p className={styles.errorMessage}>Error: {error}</p>} {/* 错误提示 */}
+                            <div className={styles.messageArea}> {/* 应用 messageArea 类的样式 */}
+                                {/* 加载中提示 */}
+                                {loading && (
+                                     <p className={styles.loadingMessage}>
+                                         Processing Data: Analyzing Inputs...
+                                         {/* 添加闪烁点元素，应用 styles.pulsingDots 类 */}
+                                         <span className={styles.pulsingDots}>. . .</span>
+                                     </p>
+                                )}
+                                {/* 错误提示 */}
+                                {error && <p className={styles.errorMessage}>Error: {error}</p>}
                             </div>
                         </div>
-                        {/* 原来的结果区域（显示ID和下载按钮）已移除，因为成功后会跳转到编辑器 */}
                      </main>
                 </>
             } />
 
             {/* Route 定义：当 URL 路径匹配 "/edit/:presentationId" 模式时，渲染 EditorPage 组件 */}
-            {/* :presentationId 是一个 URL 参数，它的值可以在 EditorPage 中通过 useParams() 获取 */}
             <Route path="/edit/:presentationId" element={<EditorPage />} />
 
             {/* TODO: 可以添加一个匹配所有未定义路径的 404 Not Found 页面路由 */}

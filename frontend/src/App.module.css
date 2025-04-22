@@ -1,752 +1,902 @@
 /* frontend/src/App.module.css */
+/* 赛博朋克主题样式 */
 
 /* --- CSS Variables for Cyberpunk Theme --- */
+/* 定义主题颜色、字体等变量，方便统一管理和修改 */
 :root {
     --color-bg-dark: #0a0a1a; /* 深色背景 */
     --color-bg-medium: #1a1a2e; /* 中度深色背景 */
-    --color-neon-blue: #00ffff; /* 赛博蓝 */
-    --color-neon-magenta: #ff00ff; /* 霓虹品红 */
-    --color-neon-green: #00ff00; /* 赛博绿 */
-    --color-text-primary: #e0e0ff; /* 主要文本颜色 */
-    --color-text-secondary: #a0a0c0; /* 次要文本颜色 */
+    --color-neon-blue: #00ffff; /* 赛博蓝，常用于标题、选中状态 */
+    --color-neon-magenta: #ff00ff; /* 霓虹品红，常用于强调、光晕 */
+    --color-neon-green: #00ff00; /* 赛博绿，常用于代码、提示、编号 */
+    --color-text-primary: #e0e0ff; /* 主要文本颜色（偏亮） */
+    --color-text-secondary: #a0a0c0; /* 次要文本颜色（偏暗） */
     --color-border: #303050; /* 边框颜色 */
     --color-accent-glow-blue: rgba(0, 255, 255, 0.5); /* 蓝色光晕 */
     --color-accent-glow-magenta: rgba(255, 0, 255, 0.5); /* 品红光晕 */
     --color-accent-glow-green: rgba(0, 255, 0, 0.5); /* 绿色光晕 */
-    --font-primary: 'Share Tech Mono', monospace; /* 未来感等宽字体 */
-    --font-secondary: 'Orbitron', sans-serif; /* 科技感无衬线字体 */
+
+    /* 字体设置，请确保在 index.html 中导入了这些字体，或在此文件顶部使用 @import */
+    --font-primary: 'Share Tech Mono', monospace; /* 未来感等宽字体，适合代码、数字 */
+    --font-secondary: 'Orbitron', sans-serif; /* 科技感无衬线字体，适合标题、按钮 */
     --font-body: 'Arial', sans-serif; /* 可读性好的正文，或者其他无衬线字体如 'Roboto', 'Lato' */
-  }
-  
-  /* --- Global Styles --- */
-  /* 应用于 body，设置整体背景、字体、颜色 */
-  body {
+
+    /* 新增一些通用的间距和尺寸变量 */
+    --spacing-unit: 8px; /* 基本间距单位 */
+    --border-radius-small: 4px;
+    --border-radius-medium: 8px;
+}
+
+/* --- Global Styles --- */
+/* 应用于 body，设置整体背景、字体、颜色 */
+body {
     margin: 0;
     padding: 0;
     background-color: var(--color-bg-dark);
     color: var(--color-text-primary);
     font-family: var(--font-body); /* 默认使用正文可读字体 */
     overflow-x: hidden; /* 防止横向滚动条 */
-  }
-  
-  /* 主应用容器 */
-  .app {
+    line-height: 1.6; /* 设置默认行高 */
+}
+
+/* 主应用容器 */
+.app {
     min-height: 100vh; /* 最小高度占满视口 */
     display: flex;
     flex-direction: column; /* 垂直排列子元素（头部、主内容） */
     align-items: center; /* 水平居中 */
-    padding: 40px 20px; /* 上下内边距 40px，左右 20px */
+    padding: calc(5 * var(--spacing-unit)) calc(2.5 * var(--spacing-unit)); /* 使用变量设置内边距 */
     box-sizing: border-box; /* 内边距和边框不增加元素总尺寸 */
     position: relative; /* 用于定位背景效果 */
-  }
-  
-  /* 可选：背景扫描线效果 */
-  .app::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background:
-          repeating-linear-gradient(
-              0deg, /* 从上到下 */
-              transparent,
-              transparent 1px,
-              rgba(0, 255, 255, 0.05) 1px, /* 细微的赛博蓝线条 */
-              rgba(0, 255, 255, 0.05) 2px
-          );
-      pointer-events: none; /* 不阻挡鼠标事件 */
-      z-index: -1; /* 放在最底层 */
-      opacity: 0.3; /* 降低透明度 */
-  }
-  
-  
-  /* --- Header Styles --- */
-  .header {
-    margin-bottom: 60px;
-    text-align: center;
-  }
-  
-  .header h1 {
-    font-family: var(--font-secondary); /* 标题使用科技感字体 */
-    color: var(--color-neon-blue); /* 赛博蓝标题 */
-    text-shadow: 0 0 10px var(--color-neon-blue), 0 0 20px var(--color-neon-blue); /* 霓虹光晕效果 */
-    letter-spacing: 3px; /* 字母间距 */
-    font-size: 2.5em; /* 字体大小 */
-  }
-  
-  /* --- Input Section Styles (主页的输入区域) --- */
-  .inputSection {
-    background-color: var(--color-bg-medium); /* 中度深色背景 */
-    border: 1px solid var(--color-border); /* 边框 */
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); /* 赛博蓝光晕 */
-    padding: 30px;
-    border-radius: 8px; /* 圆角 */
+}
+
+/* 可选：背景扫描线效果 - subtle 且在最底层 */
+.app::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 800px; /* 最大宽度 */
-    margin-bottom: 40px;
-    box-sizing: border-box;
-  }
-  
-  .inputSection h2 {
-      font-family: var(--font-secondary);
-      color: var(--color-text-secondary); /* 次要文本颜色 */
-      margin-top: 0;
-      border-bottom: 1px dashed var(--color-border); /* 虚线下划线 */
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-  }
-  
-  /* --- Textarea Style (主页的文本输入框) --- */
-  .inputSection textarea {
-    width: 100%;
-    /* 高度可以固定或根据内容调整，这里固定一个较大的高度 */
-    height: 250px;
-    padding: 15px;
-    background-color: #000a1a; /* 更深的输入背景 */
-    border: 1px solid var(--color-border);
-    color: var(--color-neon-green); /* 输入文字使用赛博绿 */
-    font-family: var(--font-primary); /* 输入框使用等宽字体 */
-    font-size: 1em;
-    box-sizing: border-box;
-    resize: vertical; /* 只允许垂直拖动改变大小 */
-    outline: none; /* 移除默认焦点轮廓 */
-    box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.2); /* 内嵌光晕 */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 平滑过渡 */
-  }
-  
-  .inputSection textarea:focus {
-    border-color: var(--color-neon-green);
-    box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.5), 0 0 8px rgba(0, 255, 0, 0.3); /* 焦点时更强的光晕 */
-  }
-  
-  /* --- Button Style (通用霓虹按钮) --- */
-  .neonButton {
-    display: inline-block;
-    padding: 12px 25px;
-    font-size: 1.1em;
+    height: 100%;
+    background:
+        repeating-linear-gradient(
+            0deg, /* 从上到下 */
+            transparent,
+            transparent 1px,
+            rgba(0, 255, 255, 0.05) 1px, /* 细微的赛博蓝线条 */
+            rgba(0, 255, 255, 0.05) 2px
+        );
+    pointer-events: none; /* 不阻挡鼠标事件 */
+    z-index: -1; /* 放在最底层 */
+    opacity: 0.3; /* 降低透明度 */
+}
+
+
+/* --- Header Styles --- */
+.header {
+  margin-bottom: calc(7.5 * var(--spacing-unit)); /* 增加与下方内容的间隔 */
+  text-align: center;
+}
+
+.header h1 {
+  font-family: var(--font-secondary); /* 标题使用科技感字体 */
+  color: var(--color-neon-blue); /* 赛博蓝标题 */
+  text-shadow: 0 0 10px var(--color-neon-blue), 0 0 20px var(--color-neon-blue); /* 霓虹光晕效果 */
+  letter-spacing: 3px; /* 字母间距 */
+  font-size: 2.5em; /* 字体大小 */
+  margin: 0; /* 移除默认外边距 */
+}
+
+/* --- Input Section Styles (主页的输入区域) --- */
+.inputSection {
+  background-color: var(--color-bg-medium); /* 中度深色背景 */
+  border: 1px solid var(--color-border); /* 边框 */
+  box-shadow: 0 0 15px var(--color-accent-glow-blue); /* 赛博蓝光晕 */
+  padding: calc(3.5 * var(--spacing-unit)); /* 使用变量设置内边距 */
+  border-radius: var(--border-radius-medium); /* 圆角 */
+  width: 100%;
+  max-width: 800px; /* 最大宽度 */
+  margin-bottom: calc(5 * var(--spacing-unit)); /* 与下方内容的间隔 */
+  box-sizing: border-box;
+  /* 添加 Subtle Border Pulse Effect on Hover/Focus */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* 可选：悬停和子元素聚焦时，外层容器光晕变亮 */
+.inputSection:focus-within,
+.inputSection:hover {
+    box-shadow: 0 0 20px var(--color-accent-glow-blue);
+}
+
+
+.inputSection h2 {
     font-family: var(--font-secondary);
-    color: var(--color-neon-blue); /* 文字颜色 */
-    background-color: transparent; /* 背景透明 */
-    border: 2px solid var(--color-neon-blue); /* 边框 */
-    border-radius: 5px;
-    cursor: pointer;
-    text-transform: uppercase; /* 大写 */
-    letter-spacing: 2px;
-    transition: all 0.3s ease; /* 所有属性变化都平滑过渡 */
-    position: relative; /* 用于伪元素光晕 */
-    overflow: hidden; /* 隐藏超出边框的光晕伪元素 */
-    margin-top: 20px;
+    color: var(--color-text-secondary); /* 次要文本颜色 */
+    margin-top: 0; /* 移除默认顶部外边距 */
+    padding-bottom: var(--spacing-unit); /* 底部内边距 */
+    border-bottom: 1px dashed var(--color-border); /* 虚线下划线 */
+    margin-bottom: calc(2.5 * var(--spacing-unit)); /* 与下方内容的间隔 */
+    font-size: 1.5em; /* 调整标题大小 */
+}
+
+/* --- Textarea Style (主页的文本输入框) --- */
+.inputSection textarea {
+  width: 100%;
+  height: 250px;
+  padding: calc(1.5 * var(--spacing-unit)); /* 使用变量设置内边距 */
+  background-color: #000a1a; /* 更深的输入背景 */
+  border: 1px solid var(--color-border);
+  color: var(--color-neon-green); /* 输入文字使用赛博绿 */
+  font-family: var(--font-primary); /* 输入框使用等宽字体 */
+  font-size: 1em;
+  box-sizing: border-box;
+  resize: vertical; /* 只允许垂直拖动改变大小 */
+  outline: none; /* 移除默认焦点轮廓 */
+  /* 内嵌光晕效果 */
+  box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.2);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 平滑过渡 */
+  border-radius: var(--border-radius-small); /* 文本框圆角 */
+}
+
+.inputSection textarea:focus {
+  border-color: var(--color-neon-green);
+  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.5), 0 0 8px rgba(0, 255, 0, 0.3); /* 焦点时更强的光晕 */
+}
+
+/* --- Button Style (通用霓虹按钮) --- */
+/* 应用于主页的生成按钮、编辑页的保存按钮 */
+.neonButton {
+  display: inline-block;
+  padding: calc(1.5 * var(--spacing-unit)) calc(3 * var(--spacing-unit)); /* 内边距 */
+  font-size: 1.1em;
+  font-family: var(--font-secondary);
+  color: var(--color-neon-blue); /* 文字颜色 */
+  background-color: transparent; /* 背景透明 */
+  border: 2px solid var(--color-neon-blue); /* 边框 */
+  border-radius: var(--border-radius-small); /* 圆角 */
+  cursor: pointer; /* 鼠标样式 */
+  text-transform: uppercase; /* 大写 */
+  letter-spacing: 2px;
+  transition: all 0.3s ease; /* 所有属性变化都平滑过渡 */
+  position: relative; /* 用于伪元素光晕 */
+  overflow: hidden; /* 隐藏超出边框的光晕伪元素 */
+  margin-top: calc(2.5 * var(--spacing-unit)); /* 与上方内容的间隔 */
+  /* 添加一个 subtle box-shadow 作为基础光晕 */
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.neonButton:hover:not(:disabled) { /* 悬停且非禁用状态 */
+  color: var(--color-bg-medium); /* 悬停时文字颜色变深 */
+  background-color: var(--color-neon-blue); /* 悬停时背景变色 */
+  /* 悬停时的光晕效果 */
+  box-shadow: 0 0 15px var(--color-neon-blue), 0 0 50px var(--color-neon-blue), 0 0 100px var(--color-neon-blue);
+  border-color: var(--color-neon-blue); /* 悬停时边框不变 */
+}
+
+.neonButton:disabled {
+  color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+  cursor: not-allowed; /* 禁用时鼠标样式 */
+  box-shadow: none; /* 禁用时光晕消失 */
+  background-color: transparent;
+  opacity: 0.6; /* 禁用状态变暗 */
+}
+
+/* 加载中按钮的脉冲动画 */
+.neonButton[data-loading="true"]:disabled {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); /* 脉冲光晕起始 */
   }
-  
-  .neonButton:hover {
-    color: var(--color-bg-medium); /* 悬停时文字颜色变深 */
-    background-color: var(--color-neon-blue); /* 悬停时背景变色 */
-    box-shadow: 0 0 10px var(--color-neon-blue), 0 0 40px var(--color-neon-blue), 0 0 80px var(--color-neon-blue); /* 悬停时的光晕效果 */
-    border-color: var(--color-neon-blue); /* 悬停时边框不变 */
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5); /* 脉冲光晕最强 */
   }
-  
-  .neonButton:disabled {
-    color: var(--color-text-secondary);
-    border-color: var(--color-text-secondary);
-    cursor: not-allowed; /* 禁用时鼠标样式 */
-    box-shadow: none;
-    background-color: transparent;
-    opacity: 0.6; /* 禁用状态变暗 */
-  }
-  
-  /* 可选：加载中按钮的脉冲动画 */
-  .neonButton[data-loading="true"] {
-      animation: pulse 1.5s infinite ease-in-out;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); /* 脉冲光晕起始 */
-    }
-    50% {
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5); /* 脉冲光晕最强 */
-    }
-  }
-  
-  
-  /* --- Loading/Error Messages Styles --- */
-  .messageArea {
-      margin-top: 20px;
-      min-height: 20px; /* 占位，避免布局跳动 */
-      text-align: center;
-  }
-  
-  .loadingMessage {
-      color: var(--color-neon-magenta); /* 品红色表示处理中 */
-      font-family: var(--font-primary); /* 等宽字体 */
-      animation: blink 1s infinite steps(1, start); /* 模拟终端闪烁动画 */
-  }
-  
-  @keyframes blink {
-    50% { opacity: 0; } /* 50% 时间隐藏，实现闪烁效果 */
-  }
-  
-  
-  .errorMessage {
-    color: #ff6666; /* 红色表示错误 */
-    font-family: var(--font-body);
-  }
-  
-  /* --- Output Section Styles (已移除 App.js 中，但样式可以保留作为参考或未来使用) --- */
-  /*
-  .outputSection {
+}
+
+
+/* --- Loading/Error Messages Styles --- */
+.messageArea {
+    margin-top: calc(2.5 * var(--spacing-unit)); /* 与上方内容的间隔 */
+    min-height: calc(2.5 * var(--spacing-unit)); /* 占位，避免布局跳动 */
+    text-align: center;
+    width: 100%; /* 确保居中在容器内 */
+}
+
+.loadingMessage {
+    color: var(--color-neon-magenta); /* 品红色表示处理中 */
+    font-family: var(--font-primary); /* 等宽字体 */
+    font-size: 1em;
+    /* animation: blink 1s infinite steps(1, start); # 移除整体闪烁动画 */
+    /* 保持文本可见，只让点闪烁 */
+}
+/* 新增闪烁点样式 */
+.pulsingDots {
+    display: inline-block; /* 确保 span 元素可以应用动画 */
+    margin-left: var(--spacing-unit); /* 与文本的间隔 */
+    font-family: var(--font-primary); /* 确保点也是等宽字体 */
+    animation: blink-dots 1s infinite steps(1, start); /* 点的闪烁动画 */
+}
+
+@keyframes blink-dots {
+  50% { opacity: 0; } /* 50% 时间隐藏，实现闪烁效果 */
+}
+
+
+.errorMessage {
+  color: #ff6666; /* 红色表示错误 */
+  font-family: var(--font-body);
+  font-size: 1em;
+}
+
+/* --- Output Section Styles (已移除 App.js 中，保留样式作为参考或未来使用) --- */
+/* ... (之前的 OutputSection 样式) ... */
+
+
+/* --- Editor Specific Styles --- */
+/* 编辑器布局容器，使用 flex 布局将幻灯片列表和编辑区域并排 */
+.editorLayout {
+    display: flex;
+    width: 100%;
+    max-width: 1400px; /* 增加编辑器容器最大宽度 */
+    gap: calc(5 * var(--spacing-unit)); /* 增加左右模块之间的间隔 */
+    flex-wrap: wrap; /* 在空间不足时允许换行，实现响应式布局 */
+    align-items: flex-start; /* 子项顶部对齐 */
+    margin-top: calc(5 * var(--spacing-unit)); /* 与头部间隔 */
+}
+
+/* 左侧：幻灯片列表区域 */
+.slideList {
+    flex: 1; /* 占据可用空间的比例 */
+    min-width: 300px; /* 设置一个最小宽度 */
     background-color: var(--color-bg-medium);
     border: 1px solid var(--color-border);
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.1);
-    padding: 30px;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 800px;
+    border-radius: var(--border-radius-medium);
+    padding: calc(2.5 * var(--spacing-unit));
     box-sizing: border-box;
-    margin-top: 40px;
-    border-left: 4px solid var(--color-neon-magenta);
-    animation: slideInFromLeft 0.5s ease-out;
+    max-height: 80vh; /* 限制最大高度，当幻灯片很多时出现滚动条 */
+    overflow-y: auto; /* 垂直方向滚动 */
+    border-right: 4px solid var(--color-neon-blue); /* 赛博蓝强调右边框 */
+    animation: fadeIn 0.5s ease-out; /* 淡入动画 */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); /* 赛博蓝光晕 */
+}
+/* 滚动条样式 (Webkit) */
+.slideList::-webkit-scrollbar {
+    width: var(--spacing-unit); /* 宽度 */
+}
+.slideList::-webkit-scrollbar-track {
+    background: var(--color-bg-dark); /* 轨道背景 */
+    border-radius: calc(1.25 * var(--spacing-unit));
+}
+.slideList::-webkit-scrollbar-thumb {
+    background: var(--color-border); /* 滑块颜色 */
+    border-radius: calc(1.25 * var(--spacing-unit));
+}
+.slideList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary); /* 滑块悬停颜色 */
+}
+/* 滚动条样式 (Firefox) */
+.slideList {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) var(--color-bg-dark);
+}
+
+
+/* 幻灯片列表标题 */
+.slideList h3 {
+    font-family: var(--font-secondary);
+    color: var(--color-text-secondary);
+    margin-top: 0;
+    padding-bottom: var(--spacing-unit);
+    border-bottom: 1px dashed var(--color-border);
+    margin-bottom: calc(1.5 * var(--spacing-unit));
+    font-size: 1.3em; /* 调整标题大小 */
+}
+
+/* 幻灯片列表容器（ul） */
+.slideList ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 幻灯片列表项（li） */
+.slideListItem {
+    padding: calc(1.25 * var(--spacing-unit)); /* 列表项内边距 */
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1); /* 淡色分隔线 */
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left-color 0.2s ease, color 0.2s ease;
+    font-family: var(--font-body);
+    color: var(--color-text-primary);
+    display: flex; /* 使用 flex 布局，让内容和按钮对齐 */
+    align-items: center;
+    justify-content: space-between; /* 内容和按钮左右对齐 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-left: 4px solid transparent; /* 默认透明左边框 */
+    margin-bottom: var(--spacing-unit); /* 列表项之间一些间隔 */
+    border-radius: var(--border-radius-small); /* 列表项圆角 */
+}
+
+.slideListItem:last-child {
+    border-bottom: none;
+}
+
+/* 幻灯片顺序编号样式 */
+.slideOrder {
+    color: var(--color-neon-green);
+    font-family: var(--font-primary);
+    margin-right: var(--spacing-unit); /* 增加编号和标题的间隔 */
+    flex-shrink: 0; /* 防止数字被压缩 */
+}
+
+/* 幻灯片标题部分 (在 li 中) */
+.slideListItem span:nth-of-type(2) { /* 选择第二个 span，即标题 */
+    flex-grow: 1; /* 占据剩余空间 */
+    min-width: 0; /* 允许标题在flex item中收缩 */
+    margin-right: var(--spacing-unit); /* 标题和按钮之间留白 */
+    overflow: hidden; /* 隐藏超出容器的内容 */
+    text-overflow: ellipsis; /* 超出部分显示省略号 */
+    white-space: nowrap; /* 内容不换行 */
+}
+
+
+.slideListItem:hover:not(.activeSlide) { /* 悬停且非选中状态 */
+    background-color: rgba(0, 255, 255, 0.1); /* 悬停背景 */
+}
+
+/* 选中状态的列表项样式 */
+.slideListItem.activeSlide {
+    background-color: rgba(0, 255, 255, 0.2); /* 选中状态背景 */
+    border-left-color: var(--color-neon-blue); /* 选中状态左边框变为赛博蓝 */
+    color: var(--color-neon-blue); /* 选中状态文本颜色变为赛博蓝 */
+    font-weight: bold;
+    box-shadow: 2px 0 8px rgba(0, 255, 255, 0.3); /* 选中时光晕效果 */
+}
+
+
+/* 删除幻灯片按钮样式 */
+.deleteSlideButton {
+    background-color: #ff6666; /* 红色背景 */
+    color: var(--color-bg-medium); /* 深色文字 */
+    border: none;
+    border-radius: var(--border-radius-small);
+    padding: calc(0.25 * var(--spacing-unit)) calc(0.75 * var(--spacing-unit)); /* 调整内边距 */
+    font-size: 0.8em;
+    cursor: pointer;
+    margin-left: auto; /* 推到最右边 */
+    flex-shrink: 0; /* 防止按钮被压缩 */
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.8; /* 默认稍微透明 */
+}
+
+.deleteSlideButton:hover:not(:disabled) { /* 悬停且非禁用 */
+    background-color: #ff3333; /* 悬停时更深的红色 */
+    opacity: 1; /* 悬停时完全不透明 */
+}
+
+.deleteSlideButton:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* 新增幻灯片按钮样式 */
+.addSlideButton {
+    display: block; /* 块级元素独占一行 */
+    width: 100%; /* 宽度拉满 */
+    margin-top: calc(2 * var(--spacing-unit));
+    padding: calc(1.25 * var(--spacing-unit));
+    font-size: 1em;
+    font-family: var(--font-secondary);
+    color: var(--color-neon-green);
+    background-color: transparent;
+    border: 2px dashed var(--color-neon-green); /* 虚线边框 */
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-align: center;
+     /* 添加 subtle box-shadow */
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.addSlideButton:hover:not(:disabled) {
+    color: var(--color-bg-medium);
+    background-color: var(--color-neon-green);
+    box-shadow: 0 0 10px var(--color-neon-green), 0 0 20px var(--color-neon-green);
+}
+
+.addSlideButton:disabled {
+    color: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
+    cursor: not-allowed;
+    box-shadow: none;
+    background-color: transparent;
+    opacity: 0.6;
+}
+
+/* 如果没有幻灯片，显示添加第一页按钮的容器样式 */
+.messageArea button.messageAreaAddButton { /* 使用更具体的类名避免冲突 */
+    margin-top: calc(1.25 * var(--spacing-unit));
+    width: auto;
+    display: inline-block;
+    padding: var(--spacing-unit) calc(1.5 * var(--spacing-unit));
+    align-self: center; /* 在 flex/grid 容器中居中 */
+}
+
+
+/* 右侧：当前幻灯片详细编辑区域 */
+.slideEditor {
+    flex: 2;
+    min-width: 500px; /* 增加最小宽度 */
+    background-color: var(--color-bg-medium);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-medium);
+    padding: calc(3.5 * var(--spacing-unit));
+    box-sizing: border-box;
+    border-left: 4px solid var(--color-neon-magenta); /* 品红强调左边框 */
+    display: flex;
+    flex-direction: column;
+    gap: calc(3 * var(--spacing-unit)); /* 增加各部分之间的间隔 */
+    animation: fadeIn 0.5s ease-out;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.1); /* 品红光晕 */
+    /* 添加 Subtle Border Pulse Effect on Hover/Focus */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* 可选：悬停和子元素聚焦时，外层容器光晕变亮 */
+.slideEditor:focus-within,
+.slideEditor:hover {
+    box-shadow: 0 0 20px var(--color-accent-glow-magenta);
+}
+
+
+/* 编辑器页面标题 */
+.slideEditor h3 {
+    font-family: var(--font-secondary);
+    color: var(--color-text-secondary);
+    margin-top: 0;
+    padding-bottom: var(--spacing-unit);
+    border-bottom: 1px dashed var(--color-border);
+    margin-bottom: calc(1.5 * var(--spacing-unit));
+    font-size: 1.3em; /* 调整标题大小 */
+}
+
+/* --- 模拟幻灯片预览区域 --- */
+.slidePreview {
+    position: relative; /* 用于内部元素的定位 */
+    width: 100%;
+    /* 使用 padding-top 结合 width 模拟 16:9 宽高比 */
+    padding-top: 56.25%; /* 16:9 宽高比 (9 / 16 * 100%) */
+    background-color: #000; /* 预览区背景 */
+    border: 2px solid var(--color-neon-blue); /* 预览区边框 */
+    border-radius: var(--border-radius-small); /* 圆角 */
+    box-sizing: border-box;
+    overflow: hidden; /* 隐藏超出边界的内容 */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); /* 预览区赛博蓝光晕 */
+    margin-bottom: calc(3 * var(--spacing-unit)); /* 与下方编辑字段间隔 */
+}
+/* 将内容放置在预览区域的绝对定位容器内 */
+.slidePreview > * {
+    position: absolute;
+    box-sizing: border-box;
+    color: white; /* 预览区文本颜色 */
+    font-family: var(--font-body);
+    /* 默认居中 */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* 默认文本居中 */
+}
+
+/* 预览区域的图片容器 */
+.previewImageContainer {
+    /* 图片容器默认相对预览区域居中显示 */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* 容器宽度 */
+    height: 80%; /* 容器高度 */
+    max-width: 90%; /* 确保不超过预览区 */
+    max-height: 90%;
+    background-color: rgba(255, 255, 255, 0.1); /* 图片加载前的占位背景 */
+    display: flex; /* 用于图片居中 */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px dashed rgba(0, 255, 0, 0.3); /* 图片占位框虚线 */
+    border-radius: var(--border-radius-small);
+}
+
+/* 预览图片本身 */
+.previewImage {
+    display: block;
+    width: auto; /* 宽度自适应，高度固定 */
+    height: 100%;
+    max-width: 100%; /* 确保不超出容器 */
+    max-height: 100%;
+    object-fit: contain; /* 保持比例 */
+}
+
+/* 预览区域的“无图片”提示 */
+.previewNoImage {
+    /* 默认居中样式 */
+    color: var(--color-text-secondary);
+    font-family: var(--font-primary);
+    font-size: 1.2em;
+}
+
+
+/* 预览区域的标题 */
+.previewTitle {
+    /* 标题默认居中，但可以根据是否有图片调整位置 */
+    top: 5%; /* 距离顶部 */
+    font-size: 1.5em;
+    font-family: var(--font-secondary);
+    text-align: center;
+    color: var(--color-neon-blue); /* 标题颜色 */
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    /* 位置调整 */
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    transform: none; /* 移除默认居中 transform */
+}
+/* 当没有图片时，标题位置可能不同 */
+.previewTitle.previewTitleNoImage {
+    /* 例如，没有图片时标题可以稍微靠上 */
+     top: 10%;
+     font-size: 1.8em;
+}
+
+
+/* 预览区域的内容（要点） */
+.previewContent {
+    /* 内容默认居中，但可以根据是否有图片调整位置 */
+    top: 50%; /* 距离顶部 */
+    left: 5%;
+    width: 90%;
+    right: 5%;
+    font-size: 1em;
+    list-style: disc; /* 默认圆点列表 */
+    list-style-position: inside; /* 列表点在内容内 */
+    margin: 0;
+    padding: 0;
+    color: var(--color-text-primary); /* 要点颜色 */
+    line-height: 1.6;
+    max-height: 40%; /* 限制要点区域高度 */
+    overflow-y: auto; /* 要点多时可滚动 */
+    text-align: left; /* 要点文本左对齐 */
+    transform: none; /* 移除默认居中 transform */
+     /* 滚动条样式 */
+     scrollbar-width: thin; /* Firefox */
+     scrollbar-color: var(--color-border) var(--color-bg-dark);
+}
+/* 预览内容滚动条样式 (Webkit) */
+ .previewContent::-webkit-scrollbar {
+     width: var(--spacing-unit-small); /* 宽度 */
+ }
+  .previewContent::-webkit-scrollbar-track {
+      background: var(--color-bg-dark);
   }
-  
-  @keyframes slideInFromLeft {
-      0% {
-          opacity: 0;
-          transform: translateX(-50px);
-      }
-      100% {
-          opacity: 1;
-          transform: translateX(0);
-      }
+  .previewContent::-webkit-scrollbar-thumb {
+      background: var(--color-border);
   }
-  
-  .outputSection h2 {
-      font-family: var(--font-secondary);
-      color: var(--color-text-secondary);
-      margin-top: 0;
-      border-bottom: 1px dashed var(--color-border);
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-  }
-  
-  .outputSection p {
-      font-family: var(--font-body);
-      color: var(--color-text-primary);
-      margin-bottom: 15px;
-      word-break: break-all;
-  }
-  
-  .outputSection strong {
-      color: var(--color-neon-green);
-      font-family: var(--font-primary);
-      letter-spacing: 1px;
-  }
-  */
-  
-  /* --- Editor Specific Styles --- */
-  /* 编辑器布局容器，使用 flex 布局将幻灯片列表和编辑区域并排 */
-  .editorLayout {
-      display: flex;
-      width: 100%;
-      max-width: 1200px; /* 编辑器容器最大宽度 */
-      gap: 30px; /* 左右模块之间的间隔 */
-      flex-wrap: wrap; /* 在空间不足时允许换行，实现响应式布局 */
-      align-items: flex-start; /* 子项顶部对齐 */
-  }
-  
-  /* 左侧：幻灯片列表区域 */
-  .slideList {
-      flex: 1; /* 占据可用空间的比例，这里是 1 份 */
-      min-width: 280px; /* 设置一个最小宽度，防止在较大屏幕下列表太窄 */
-      background-color: var(--color-bg-medium);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 20px;
-      box-sizing: border-box;
-      max-height: 70vh; /* 限制最大高度，当幻灯片很多时出现滚动条 */
-      overflow-y: auto; /* 垂直方向滚动 */
-      border-right: 4px solid var(--color-neon-blue); /* 赛博蓝强调右边框 */
-      /* 可选：添加一个 subtle 动画 */
-       animation: fadeIn 0.5s ease-out;
-  }
-  
-  /* 幻灯片列表标题 */
-  .slideList h3 {
-      font-family: var(--font-secondary);
-      color: var(--color-text-secondary);
-      margin-top: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed var(--color-border);
-      margin-bottom: 15px;
-  }
-  
-  /* 幻灯片列表容器（ul） */
-  .slideList ul {
-      list-style: none; /* 移除默认的列表点 */
-      padding: 0; /* 移除默认内边距 */
-      margin: 0; /* 移除默认外边距 */
-  }
-  
-  /* 幻灯片列表项（li） */
-  .slideListItem {
-      padding: 10px;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.1); /* 淡色分隔线 */
-      cursor: pointer; /* 鼠标悬停时显示手型 */
-      transition: background-color 0.2s ease, border-left-color 0.2s ease, color 0.2s ease; /* 添加过渡效果 */
-      font-family: var(--font-body);
-      color: var(--color-text-primary);
-      overflow: hidden; /* 隐藏超出容器的内容 */
-      text-overflow: ellipsis; /* 超出部分显示省略号 */
-      white-space: nowrap; /* 内容不换行 */
-      border-left: 4px solid transparent; /* 默认透明左边框 */
-      margin-bottom: 5px; /* 列表项之间一些间隔 */
-  }
-  
-  .slideListItem:last-child {
-      border-bottom: none; /* 最后一个列表项没有下边框 */
-  }
-  
-  /* 幻灯片顺序编号样式 */
-  .slideOrder {
-      color: var(--color-neon-green); /* 赛博绿数字 */
-      font-family: var(--font-primary); /* 等宽字体 */
-      margin-right: 5px;
-  }
-  
-  
-  .slideListItem:hover {
-      background-color: rgba(0, 255, 255, 0.1); /* 悬停背景 */
-  }
-  
-  /* 选中状态的列表项样式 */
-  .slideListItem.activeSlide {
-      background-color: rgba(0, 255, 255, 0.2); /* 选中状态背景 */
-      border-left-color: var(--color-neon-blue); /* 选中状态左边框变为赛博蓝 */
-      color: var(--color-neon-blue); /* 选中状态文本颜色变为赛博蓝 */
-      font-weight: bold;
-  }
-  
-  
-  /* 右侧：当前幻灯片详细编辑区域 */
-  .slideEditor {
-      flex: 2; /* 占据可用空间的比例，这里是 2 份 */
-      min-width: 400px; /* 设置一个最小宽度，防止在较大屏幕下编辑区太窄 */
-      background-color: var(--color-bg-medium);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 30px;
-      box-sizing: border-box;
-      border-left: 4px solid var(--color-neon-magenta); /* 品红强调左边框 */
-      display: flex;
-      flex-direction: column; /* 内部元素垂直堆叠 */
-      gap: 20px; /* 各个编辑字段之间的间隔 */
-      /* 可选：添加一个 subtle 动画 */
-       animation: fadeIn 0.5s ease-out;
-  }
-  
-  /* 编辑器页面标题 */
-  .slideEditor h3 {
-      font-family: var(--font-secondary);
-      color: var(--color-text-secondary);
-      margin-top: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed var(--color-border);
-      margin-bottom: 15px;
-  }
-  
-  /* 单个编辑字段容器（Label + Input/Textarea） */
-  .editorField {
-      display: flex;
-      flex-direction: column; /* label 和输入框垂直排列 */
-  }
-  
-  /* 编辑字段 Label 样式 */
-  .editorField label {
-      font-family: var(--font-primary); /* 等宽字体 */
-      color: var(--color-neon-green); /* 赛博绿 */
-      margin-bottom: 8px;
-      font-size: 0.9em;
-      text-transform: uppercase; /* 大写 */
-  }
-  
-  /* 编辑器输入框和文本域的通用样式 */
+   .previewContent::-webkit-scrollbar-thumb:hover {
+       background: var(--color-text-secondary);
+   }
+
+/* 当有图片时，调整内容位置和宽度 */
+.previewContent:not(.previewContentNoImage) {
+    top: 25%; /* 放置在图片下方 */
+    left: 5%;
+    width: 45%; /* 占据左侧区域 */
+    right: auto;
+    max-height: 65%; /* 增加最大高度 */
+}
+
+
+/* 预览区域的单个要点 */
+.previewPoint {
+    margin-bottom: calc(0.5 * var(--spacing-unit)); /* 减小要点之间间隔 */
+    word-break: break-word; /* 长单词换行 */
+}
+
+
+/* 单个编辑字段容器（Label + Input/Textarea/Select） */
+.editorField {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: calc(1.5 * var(--spacing-unit)); /* 调整字段之间间隔 */
+}
+.editorField:last-child {
+    margin-bottom: 0; /* 最后一个字段没有底部外边距 */
+}
+
+
+/* 编辑字段 Label 样式 */
+.editorField label {
+    font-family: var(--font-primary);
+    color: var(--color-neon-green);
+    margin-bottom: var(--spacing-unit); /* 调整 Label 和输入框之间间隔 */
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 编辑器输入框、文本域和 Select 元素的通用样式 */
   .editorInput,
-  .editorTextarea {
+  .editorTextarea,
+  .editorSelect {
       width: 100%;
-      padding: 10px;
-      background-color: #000a1a; /* 深色背景 */
+      padding: var(--spacing-unit);
+      background-color: #000a1a;
       border: 1px solid var(--color-border);
-      color: var(--color-text-primary); /* 文本颜色 */
-      font-family: var(--font-body); /* 使用正文可读字体 */
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
       font-size: 1em;
       box-sizing: border-box;
-      resize: vertical; /* 只允许垂直拖动改变大小 */
-      outline: none; /* 移除默认焦点轮廓 */
-      box-shadow: inset 0 0 5px rgba(255, 0, 255, 0.1); /* 品红内嵌光晕 */
-      transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease; /* 添加过渡效果 */
+      outline: none;
+      box-shadow: inset 0 0 5px rgba(255, 0, 255, 0.1);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+      border-radius: var(--border-radius-small);
   }
-  
-  /* 编辑器输入框和文本域获取焦点时的样式 */
+
+/* 编辑器输入框、文本域和 Select 获取焦点时的样式 */
   .editorInput:focus,
-  .editorTextarea:focus {
-      border-color: var(--color-neon-magenta); /* 焦点时边框变色 */
-      box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.5), 0 0 8px rgba(255, 0, 255, 0.3); /* 焦点时光晕增强 */
-      color: var(--color-neon-magenta); /* 焦点时文本变色 */
+  .editorTextarea:focus,
+  .editorSelect:focus {
+      border-color: var(--color-neon-magenta);
+      box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.5), 0 0 8px rgba(255, 0, 255, 0.3);
+      color: var(--color-neon-magenta);
   }
-  
-  /* 编辑器文本域的最小高度 */
-  .editorTextarea {
-      min-height: 150px; /* 文本域最小高度 */
+
+  /* Select 元素的额外样式 */
+  .editorSelect {
+      appearance: none; /* 移除默认的下拉箭头 */
+      /* 使用 SVG 作为背景图片实现自定义下拉箭头 */
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'); /* 自定义下拉箭头，使用赛博绿 */
+      background-repeat: no-repeat;
+      background-position: right calc(1.25 * var(--spacing-unit)) center; /* 箭头位置 */
+      background-size: calc(1.5 * var(--spacing-unit)); /* 箭头大小 */
+      padding-right: calc(3.5 * var(--spacing-unit)); /* 为箭头留出空间 */
+      cursor: pointer; /* 鼠标悬停时显示手型 */
   }
-  
-  /* 编辑器操作按钮区域 */
-  .editorActions {
-      margin-top: 20px;
-      display: flex; /* 使用 flex 布局排列按钮 */
-      gap: 20px; /* 按钮之间的间隔 */
-      align-items: center; /* 垂直居中 */
-      flex-wrap: wrap; /* 允许按钮换行 */
+  /* 禁用状态下的 Select 样式 */
+  .editorSelect:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
   }
-  
-  /* 保存成功提示信息样式 */
-  .saveSuccessMessage {
-      color: var(--color-neon-green); /* 赛博绿 */
-      font-family: var(--font-primary); /* 等宽字体 */
-      font-size: 0.9em;
-      animation: fadeInOut 3s ease-out forwards; /* 淡入淡出动画，持续 3 秒 */
-  }
-  
-  /* 保存成功提示的淡入淡出动画 */
-  @keyframes fadeInOut {
-      0% { opacity: 0; } /* 开始时完全透明 */
-      15% { opacity: 1; } /* 快速淡入到完全不透明 */
-      85% { opacity: 1; } /* 保持不透明 */
-      100% { opacity: 0; } /* 淡出到完全透明 */
-  }
-  
-  
-  /* --- 通用动画 --- */
-  /* 简单的淡入动画 */
-  @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-  }
-  
-  
-    /* 幻灯片列表项（li）样式，需要调整以便容纳删除按钮 */
-    .slideListItem {
-        padding: 10px;
-        border-bottom: 1px dashed rgba(255, 255, 255, 0.1); /* 淡色分隔线 */
-        cursor: pointer;
-        transition: background-color 0.2s ease, border-left-color 0.2s ease, color 0.2s ease;
-        font-family: var(--font-body);
-        color: var(--color-text-primary);
-        /* 调整为 flex 布局，让内容和按钮对齐 */
-        display: flex;
-        align-items: center; /* 垂直居中 */
-        justify-content: space-between; /* 内容和按钮左右对齐 */
-        /* overflow, text-overflow, white-space 仍然重要，防止标题过长 */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        border-left: 4px solid transparent;
-        margin-bottom: 5px;
-    }
-
-    .slideListItem:last-child {
-        border-bottom: none;
-    }
-
-    /* 幻灯片顺序编号和标题容器 */
-    .slideListItem span:first-child { /* 针对顺序编号的 span */
-        flex-shrink: 0; /* 防止数字被压缩 */
-    }
-    .slideListItem span:nth-child(2) { /* 针对标题的 span (如果标题是 span) 或直接 li 文本 */
-        flex-grow: 1; /* 标题占据剩余空间 */
-        min-width: 0; /* 允许标题在flex item中收缩 */
-        margin-right: 10px; /* 标题和按钮之间留白 */
-        /* 如果标题不是单独 span，上面的选择器和 flex 调整需要根据实际HTML结构调整 */
-    }
 
 
-    /* 删除幻灯片按钮样式 */
-    .deleteSlideButton {
-        background-color: #ff6666; /* 红色背景 */
-        color: var(--color-bg-medium); /* 深色文字 */
-        border: none;
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 0.8em;
-        cursor: pointer;
-        margin-left: auto; /* 推到最右边 */
-        flex-shrink: 0; /* 防止按钮被压缩 */
-        transition: background-color 0.2s ease, opacity 0.2s ease;
-        opacity: 0.8; /* 默认稍微透明 */
-    }
-
-    .deleteSlideButton:hover {
-        background-color: #ff3333; /* 悬停时更深的红色 */
-        opacity: 1; /* 悬停时完全不透明 */
-    }
-
-    .deleteSlideButton:disabled {
-        background-color: #888;
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    /* 新增幻灯片按钮样式 */
-    .addSlideButton {
-        display: block; /* 块级元素独占一行 */
-        width: 100%; /* 宽度拉满 */
-        margin-top: 15px;
-        padding: 10px;
-        font-size: 1em;
-        font-family: var(--font-secondary);
-        color: var(--color-neon-green); /* 赛博绿 */
-        background-color: transparent;
-        border: 2px dashed var(--color-neon-green); /* 虚线边框 */
-        border-radius: 5px;
-        cursor: pointer;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s ease;
-        text-align: center; /* 文字居中 */
-    }
-
-    .addSlideButton:hover {
-        color: var(--color-bg-medium);
-        background-color: var(--color-neon-green);
-        box-shadow: 0 0 10px var(--color-neon-green), 0 0 20px var(--color-neon-green);
-    }
-
-    .addSlideButton:disabled {
-        color: var(--color-text-secondary);
-        border-color: var(--color-text-secondary);
-        cursor: not-allowed;
-        box-shadow: none;
-        background-color: transparent;
-        opacity: 0.6;
-    }
-
-    /* 如果没有幻灯片，显示添加第一页按钮的容器样式 */
-    /* 例如在 slideEditor 的 else 分支中用到的 div */
-    .messageArea button.addSlideButton {
-        /* 覆盖一些默认样式，确保在 messageArea 内部时看起来正确 */
-        margin-top: 10px;
-        width: auto; /* 不要拉满宽度 */
-        display: inline-block; /* 内联块元素 */
-        padding: 8px 15px; /* 调整内边距 */
-    }
+/* 编辑器文本域的最小高度 */
+.editorTextarea {
+    min-height: 150px;
+    resize: vertical;
+}
 
 
-  /* --- 响应式设计 (基本) --- */
-  /* 当屏幕宽度小于等于 768px 时应用的样式 */
-  @media (max-width: 768px) {
-    /* 输入区和输出区的内边距减小 */
-    .inputSection,
-    .outputSection,
-    .slideList,
-    .slideEditor {
-      padding: 20px;
-    }
-  
-    /* 头部标题字体大小减小 */
+/* 编辑器操作按钮区域 */
+.editorActions {
+    margin-top: calc(2.5 * var(--spacing-unit));
+    display: flex;
+    gap: calc(2.5 * var(--spacing-unit));
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* 保存成功提示信息样式 */
+.saveSuccessMessage {
+    color: var(--color-neon-green);
+    font-family: var(--font-primary);
+    font-size: 0.9em;
+    animation: fadeInOut 3s ease-out forwards;
+    margin-left: var(--spacing-unit); /* 与按钮的间隔 */
+}
+
+/* 保存成功提示的淡入淡出动画 */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+
+/* --- 通用动画 --- */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+
+/* --- 响应式设计 --- */
+/* 当屏幕宽度小于等于 1024px 时应用的样式 */
+@media (max-width: 1024px) {
+   /* 在中等屏幕下调整布局和字号 */
+   .editorLayout {
+       flex-direction: column; /* 子项垂直排列 */
+       gap: calc(3.5 * var(--spacing-unit)); /* 垂直间距 */
+   }
+   .slideList {
+       max-height: 35vh; /* 小屏幕下幻灯片列表高度缩短 */
+       min-width: auto; /* 移除最小宽度限制 */
+       order: 2; /* 在小屏幕下将列表放在编辑区域下方 */
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); /* 确保小屏幕下也有光晕 */
+   }
+   .slideEditor {
+       min-width: auto; /* 移除最小宽度限制 */
+       order: 1; /* 在小屏幕下将编辑区域放在列表上方 */
+       padding: calc(2.5 * var(--spacing-unit)); /* 减小内边距 */
+       box-shadow: 0 0 15px rgba(255, 0, 255, 0.1); /* 确保小屏幕下也有光晕 */
+   }
+   .slideList {
+       padding: calc(2.5 * var(--spacing-unit)); /* 减小内边距 */
+   }
     .header h1 {
-        font-size: 1.8em;
-    }
-  
-    /* 通用按钮的内边距和字体大小调整 */
-    .neonButton,
-    .downloadButton {
-        padding: 10px 20px;
-        font-size: 1em;
-    }
-  
-    /* 编辑器布局在小屏幕下垂直堆叠 */
-    .editorLayout {
-        flex-direction: column; /* 子项垂直排列 */
-        gap: 20px; /* 垂直间距 */
-    }
-  
-    /* 幻灯片列表高度缩短，并移除最小宽度限制 */
-    .slideList {
-        max-height: 30vh;
-        min-width: auto;
-    }
-  
-    /* 幻灯片编辑区域移除最小宽度限制 */
-    .slideEditor {
-         min-width: auto;
-         /* 如果编辑器本身的高度不够，可以考虑设置一个最小高度 */
-         /* min-height: 50vh; */
-    }
-  
-    /* 编辑字段容器样式 */
-    .editorField {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 15px; /* 增加字段之间的底部间隔 */
+        font-size: 2em;
     }
 
-    .editorField label {
-        font-family: var(--font-primary);
-        color: var(--color-neon-green);
-        margin-bottom: 8px;
-        font-size: 0.9em;
-        text-transform: uppercase;
-    }
-
-    /* 编辑器输入框、文本域和 新增的 Select 元素的通用样式 */
-    .editorInput,
-    .editorTextarea,
-    .editorSelect { /* <--- 新增 .editorSelect 类 */
-        width: 100%;
-        padding: 10px;
-        background-color: #000a1a;
-        border: 1px solid var(--color-border);
-        color: var(--color-text-primary);
-        font-family: var(--font-body);
-        font-size: 1em;
-        box-sizing: border-box;
-        outline: none;
-        box-shadow: inset 0 0 5px rgba(255, 0, 255, 0.1);
-        transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-        /* 针对 select 的一些额外样式 */
-        appearance: none; /* 移除默认的下拉箭头 */
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'); /* 自定义下拉箭头，使用赛博绿 */
-        background-repeat: no-repeat;
-        background-position: right 10px center; /* 箭头位置 */
-        background-size: 1em; /* 箭头大小 */
-        padding-right: 30px; /* 为箭头留出空间 */
-    }
-
-    /* 编辑器输入框、文本域和 Select 获取焦点时的样式 */
-    .editorInput:focus,
-    .editorTextarea:focus,
-    .editorSelect:focus { /* <--- 新增 .editorSelect:focus 类 */
-        border-color: var(--color-neon-magenta);
-        box-shadow: inset 0 0 8px rgba(255, 0, 255, 0.5), 0 0 8px rgba(255, 0, 255, 0.3);
-        color: var(--color-neon-magenta);
-    }
-
-    .editorTextarea {
-        min-height: 150px;
-        resize: vertical;
-    }
-
-
-    /* 编辑器操作按钮区域样式 */
-    .editorActions {
-        margin-top: 20px;
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    /* 保存成功提示信息样式 */
-    .saveSuccessMessage {
-        color: var(--color-neon-green);
-        font-family: var(--font-primary);
-        font-size: 0.9em;
-        animation: fadeInOut 3s ease-out forwards;
-    }
-
-    /* 保存成功提示的淡入淡出动画 */
-    @keyframes fadeInOut {
-        0% { opacity: 0; }
-        15% { opacity: 1; }
-        85% { opacity: 1; }
-        100% { opacity: 0; }
-    }
-
-    /* 列表项顺序编号样式（如果之前没有的话）*/
-    /*
-    .slideOrder {
-        color: var(--color-neon-green);
-        font-family: var(--font-primary);
-        margin-right: 5px;
-    }
-    */
-
-
-    /* --- 通用动画 --- (保持不变) */
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-
-
-    /* --- 响应式设计 (基本) --- (保持不变，但确保新的选择框和按钮在小屏幕下行为正常) */
-    @media (max-width: 768px) {
-    .inputSection,
-    .outputSection,
-    .slideList,
-    .slideEditor {
-        padding: 20px;
-    }
-
-    .header h1 {
-        font-size: 1.8em;
-    }
-
-    .neonButton,
-    .downloadButton {
-        padding: 10px 20px;
-        font-size: 1em;
-    }
-
-    .editorLayout {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .slideList {
-        max-height: 30vh;
-        min-width: auto;
-    }
-
-    .slideEditor {
-        min-width: auto;
-    }
-
-    .editorActions {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-    }
-
-    .neonButton,
-    .downloadButton {
-        width: 100%;
-        text-align: center;
-    }
-
-    /* 确保 Select 在小屏幕下也拉伸宽度 */
-    .editorSelect {
-        width: 100%;
-    }
-    .slideListItem {
-        flex-direction: row; /* 小屏幕下也保持一行 */
-        flex-wrap: nowrap; /* 不换行 */
-        /* 文本溢出处理更重要 */
-    }
-    /* 如果标题可能很长，确保它能正确收缩 */
-     .slideListItem span:nth-child(2) {
-         flex-shrink: 1;
-         white-space: nowrap;
-         overflow: hidden;
-         text-overflow: ellipsis;
+     .slideList h3, .slideEditor h3 {
+         font-size: 1.2em;
      }
 
-    .addSlideButton {
-         width: 100%; /* 小屏幕下新增按钮拉满 */
-    }
-    .messageArea button.addSlideButton {
-         width: auto; /* 如果在 messageArea 内部且只有一个按钮，可以不拉满 */
-    }
+     .slideListItem {
+         font-size: 0.95em;
+     }
 
-}
+     .neonButton, .downloadButton, .addSlideButton {
+         padding: calc(1.25 * var(--spacing-unit)) calc(2.5 * var(--spacing-unit));
+         font-size: 1em;
+     }
+
+     /* 调整预览区字体大小 */
+     .previewTitle {
+         font-size: 1.3em;
+     }
+     .previewContent {
+          font-size: 0.9em;
+     }
+     /* 调整编辑字段字体大小 */
+     .editorField label {
+         font-size: 0.8em;
+     }
+     .editorInput, .editorTextarea, .editorSelect {
+         font-size: 0.9em;
+     }
+      .editorTextarea {
+          min-height: 120px; /* 减小文本域最小高度 */
+      }
+     /* 操作按钮区域在小屏幕下垂直堆叠并拉伸 */
+     .editorActions {
+         flex-direction: column;
+         gap: calc(1.5 * var(--spacing-unit));
+         align-items: stretch; /* 按钮拉伸宽度 */
+     }
+      .neonButton, .downloadButton {
+          width: 100%; /* 按钮拉伸宽度 */
+          text-align: center;
+      }
+      .addSlideButton {
+           width: 100%; /* 按钮拉伸宽度 */
+      }
+       .messageArea button.messageAreaAddButton {
+            width: auto; /* 在 messageArea 内部时不拉伸 */
+            align-self: center; /* 在 messageArea 内部居中 */
+            padding: var(--spacing-unit) calc(1.5 * var(--spacing-unit)); /* 调整内边距 */
+       }
+        /* 调整保存成功提示的间隔 */
+       .saveSuccessMessage {
+           margin-left: 0; /* 移除左侧间隔 */
+           text-align: center; /* 文本居中 */
+           width: 100%; /* 占据一行 */
+       }
+
+
+  }
+
+/* 当屏幕宽度小于等于 768px 时应用的样式 */
+@media (max-width: 768px) {
+    .app {
+        padding: calc(2.5 * var(--spacing-unit)) var(--spacing-unit);
+    }
+    .header h1 {
+        font-size: 1.8em;
+    }
+    .inputSection {
+        padding: calc(2 * var(--spacing-unit));
+    }
+     .inputSection textarea {
+         height: 180px;
+         padding: var(--spacing-unit);
+         font-size: 0.9em;
+     }
+    .neonButton {
+         margin-top: calc(2 * var(--spacing-unit));
+         padding: var(--spacing-unit) calc(1.5 * var(--spacing-unit));
+         font-size: 0.9em;
+    }
+     .slideList {
+         max-height: 30vh; /* 进一步缩短列表高度 */
+         padding: calc(1.5 * var(--spacing-unit));
+     }
+     .slideList h3 {
+         padding-bottom: calc(0.75 * var(--spacing-unit));
+         margin-bottom: var(--spacing-unit);
+     }
+     .slideListItem {
+         padding: var(--spacing-unit);
+     }
+     .slideOrder {
+         margin-right: calc(0.75 * var(--spacing-unit));
+     }
+      .deleteSlideButton {
+           padding: calc(0.125 * var(--spacing-unit)) calc(0.5 * var(--spacing-unit));
+           font-size: 0.7em;
+      }
+
+     .slideEditor {
+         padding: calc(2 * var(--spacing-unit));
+         gap: calc(2 * var(--spacing-unit));
+     }
+      .slideEditor h3 {
+         padding-bottom: calc(0.75 * var(--spacing-unit));
+         margin-bottom: var(--spacing-unit);
+      }
+      /* 预览区字体和间距调整 */
+      .previewTitle {
+          font-size: 1.2em;
+          top: 8%; /* 调整位置 */
+      }
+       .previewContent {
+          font-size: 0.85em;
+          top: 28%; /* 调整位置 */
+          line-height: 1.5;
+          max-height: 60%;
+       }
+       /* 预览图片在小屏幕下可能需要调整大小或位置 */
+       .previewImageContainer:not(.previewImageContainerNoImage) {
+           width: 45%; /* 调整图片宽度 */
+           height: 50%; /* 调整图片高度 */
+           top: 20%; /* 调整图片位置 */
+           left: 50%;
+           transform: translateX(-50%);
+       }
+        .previewContent:not(.previewContentNoImage) {
+           top: 45%; /* 内容放在图片下方 */
+           left: 5%;
+           width: 90%; /* 内容占据整行 */
+           right: 5%;
+           max-height: 50%;
+       }
+
+       /* 编辑字段字体大小减小 */
+      .editorField label {
+         font-size: 0.7em;
+         margin-bottom: calc(0.5 * var(--spacing-unit));
+      }
+      .editorInput, .editorTextarea, .editorSelect {
+         padding: calc(0.75 * var(--spacing-unit));
+         font-size: 0.8em;
+      }
+       .editorSelect {
+           background-position: right calc(0.75 * var(--spacing-unit)) center; /* 调整箭头位置 */
+           background-size: calc(1.25 * var(--spacing-unit)); /* 调整箭头大小 */
+           padding-right: calc(3 * var(--spacing-unit)); /* 为箭头留出空间 */
+       }
+       .editorTextarea {
+          min-height: 80px;
+       }
+      .editorActions {
+          gap: calc(1 * var(--spacing-unit));
+      }
+       .saveSuccessMessage {
+          font-size: 0.8em;
+       }
 }
